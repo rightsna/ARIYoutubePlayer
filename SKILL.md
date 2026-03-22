@@ -7,12 +7,12 @@
 사용 규칙:
 
 - **재생 프로세스**:
-  1. 앱이 실행 중인지 `discover_app_commands(appId: "youtube_player")`로 먼저 확인한다.
+  1. 앱이 실행 중인지 `discover_app_commands(appId: "youtubeplayer")`로 먼저 확인한다.
   2. 앱이 꺼져 있다면 `launch_app(appName: "youtubeplayer")`로 앱을 먼저 띄운다.
   3. 재생할 비디오 목록이 확보되면 `REPLACE_PLAYLIST` 명령을 전송한다.
      - 파라미터: `{"videoIds": ["ID1", "ID2", ...]}`
 
-- **주요 명령어 명세 (youtube_player)**:
+- **주요 명령어 명세 (youtubeplayer)**:
   - `REPLACE_PLAYLIST`: 현재 목록을 싹 비우고 새 목록으로 교체한 뒤 첫 곡을 재생한다.
   - `ADD_TO_PLAYLIST`: 기존 목록을 유지하며 끝에 새 비디오들을 추가한다.
   - `REMOVE_FROM_PLAYLIST`: 목록에서 특정 비디오(ID)를 제거한다.

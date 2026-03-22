@@ -28,7 +28,7 @@ void main(List<String> args) {
     WsManager.connect();
 
     final handler = AppProtocolHandler(
-      appId: 'youtube_player',
+      appId: 'youtubeplayer',
       onCommand: (command, params) async {
         List<String> extractVideoIds(dynamic p) {
           final raw = p['videoIds'] ?? p['videoId'] ?? p['ids'];
