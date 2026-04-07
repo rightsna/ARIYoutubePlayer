@@ -1,43 +1,78 @@
-# media_playback
+# ARI Plugin Skill: ARIYoutubePlayer (Media Playback)
 
-사용 도구: youtube_play_playlist, youtube_search_videos, launch_app, send_app_command
+## Overview
+`youtube_player`는 미니멀한 단일 페이지 Flutter 유튜브 플레이어로, 비디오 검색, 플레이리스트 관리 및 실시간 재생 제어를 제공합니다. 배경 음악이나 특정 영상 시청 요청을 처리할 때 사용합니다.
 
-음악 재생, 유튜브 재생, 분위기 기반 플레이리스트 재생 등 미디어 관련 요청을 처리하는 스킬이다. 범용적인 앱 제어(실행, 복구)는 `app_control` 스킬의 규칙을 따르되, 유튜브 플레이어 전용 로직은 아래를 따른다.
+### App ID
+`youtube_player`
 
-사용 규칙:
+---
 
-- **실행 프로세스**:
-  1. 앱이 실행 중인지 확인하고(서버 연결 상태), 꺼져 있다면 `launch_app(appName: "youtube_player")`로 앱을 먼저 띄운다.
-  2. `SEARCH_PLAYLIST_CANDIDATES` 또는 `SEARCH_VIDEOS` 명령을 전송하여 재생할 비디오 목록을 확보한다.
-  3. 확보된 아이템 리스트에서 `videoId`들을 추출하여 `REPLACE_PLAYLIST` 명령을 전송하여 재생을 시작한다.
+## Commands
 
-- **주요 명령어 명세 (youtube_player)**:
-  - `SEARCH_VIDEOS`: YouTube에서 영상을 검색하여 결과를 반환한다. (재생 후보 선택용)
-    - Params: `{"query": "...", "limit": 5}`
-    - Returns: `{"status": "success", "items": [{"title": "...", "videoId": "...", ...}, ...]}`
-  - `SEARCH_PLAYLIST_CANDIDATES`: 분위기/장르 검색어에 적합한 플레이리스트 후보를 확장 검색하여 반환한다.
-    - Params: `{"query": "..."}`
-    - Returns: `{"status": "success", "items": [{"title": "...", "videoId": "...", ...}, ...]}`
-  - `REPLACE_PLAYLIST`: 현재 목록을 싹 비우고 새 목록으로 교체한 뒤 첫 곡을 재생한다.
-    - Params: `{"videoIds": ["...", ...]}`
-  - `ADD_TO_PLAYLIST`: 기존 목록을 유지하며 끝에 새 비디오들을 추가한다.
-    - Params: `{"videoIds": ["...", ...]}`
-  - `REMOVE_FROM_PLAYLIST`: 목록에서 특정 비디오(ID)를 제거한다.
-    - Params: `{"videoIds": ["...", ...]}`
-  - `SET_MINI_MODE`: 뷰포트를 작은 바 형태(`true`) 또는 일반 창(`false`)으로 바꾼다.
-    - Params: `{"enabled": true/false}`
-  - `PLAY`: 재생을 시작한다.
-  - `PAUSE`: 일시정지한다.
-  - `NEXT`: 다음 곡으로 넘어간다.
-  - `PREV`: 이전 곡으로 돌아간다.
+### 1. Search (영상 검색)
+- `SEARCH_VIDEOS`: YouTube에서 키워드로 영상을 검색하고 결과를 반환합니다.
+  - Params: `query` (검색어), `limit` (기본 5개)
+  - Returns: `List<{title, videoId, thumbnail, channelTitle}>` (재생 후보 선택용)
+- `SEARCH_PLAYLIST_CANDIDATES`: 주어진 키워드(분위기, 장르 등)에 적합한 플레이리스트 후보를 확장 검색합니다.
+  - Params: `query` (분위기/장르 등)
 
-- **유의 사항**:
-  - 사용자가 "1곡"만 요청해도 `videoIds` 리스트에 한 개만 담아서 `REPLACE_PLAYLIST`로 제어한다.
-  - 재생 중 다른 노래를 틀어달라고 하면 앱을 다시 켤 필요 없이 `REPLACE_PLAYLIST` 명령만 다시 보내면 된다.
-  - "작게 틀어줘" 혹은 "바 형태로 보여줘" 할 때는 `SET_MINI_MODE`(`enabled: true`)를 사용한다.
+### 2. Playlist Management (플레이리스트 관리)
+- `REPLACE_PLAYLIST`: 현재 재생 목록을 비우고 새 비디오 목록으로 교체한 뒤 즉시 첫 곡을 재생합니다.
+  - Params: `videoIds` (`List<String>`)
+- `ADD_TO_PLAYLIST`: 기존 목록 하단에 새 비디오들을 추가합니다.
+  - Params: `videoIds` (`List<String>`)
+- `REMOVE_FROM_PLAYLIST`: 목록 내에서 특정 비디오(ID)를 찾아 제거합니다.
+  - Params: `videoIds` (`List<String>`)
 
-우선순위:
-1. 앱 연결 상태 확인 및 필요 시 `launch_app` 호출
-2. `REPLACE_PLAYLIST`로 곡 목록 전송 및 재생 시작
-3. 상황에 따라 `ADD_TO_PLAYLIST` 혹은 `SET_MINI_MODE` 활용
-4. 재생 제어는 `PLAY`, `PAUSE`, `NEXT`, `PREV` 활용 (Params 없음)
+### 3. Playback Control (재생 제어)
+- `PLAY`: 현재 영상을 재생합니다.
+- `PAUSE`: 일시정지합니다.
+- `NEXT`: 다음 곡으로 넘어갑니다.
+- `PREV`: 이전 곡으로 돌아갑니다.
+
+### 4. UI Layout (화면 설정)
+- `SET_MINI_MODE`: 창을 하단 바 형태의 미니 모드로 전환하거나 일반 모드로 복구합니다.
+  - Params: `enabled` (`true`: 미니 모드, `false`: 일반 창)
+
+---
+
+## Writing Rules
+1. **초기 실행**: 앱이 실행 중인지 확인한 뒤, 꺼져 있다면 `launch_app(appName: "youtube_player")`를 먼저 호출하세요.
+2. **연속 재생**: 사용자가 특정 노래나 리스트를 틀어달라고 하면 `SEARCH_VIDEOS`로 ID를 얻은 뒤 `REPLACE_PLAYLIST` 명령을 보내세요.
+3. **단일 비디오 처리**: 한 곡만 요청하더라도 `videoIds` 리스트에 한 개만 담아서 `REPLACE_PLAYLIST`로 전송합니다.
+4. **미니 모드 활용**: 사용자가 "작게 틀어줘" 혹은 "바 형태로 보여줘"라고 요청하면 `SET_MINI_MODE`(`enabled: true`)를 활용하세요.
+
+---
+
+## Examples
+
+### 특정 곡 검색 후 플레이리스트 교체 재생
+```json
+{
+  "command": "REPLACE_PLAYLIST",
+  "params": {
+    "videoIds": ["dQw4w9WgXcQ"]
+  }
+}
+```
+
+### 분위기에 맞는 곡 검색 요청
+```json
+{
+  "command": "SEARCH_PLAYLIST_CANDIDATES",
+  "params": {
+    "query": "공부할 때 듣기 좋은 차분한 로파이 음악"
+  }
+}
+```
+
+### 미니 모드로 전환
+```json
+{
+  "command": "SET_MINI_MODE",
+  "params": {
+    "enabled": true
+  }
+}
+```
