@@ -162,82 +162,98 @@ class _PlayerPageState extends State<PlayerPage> {
       (playlist) => playlist.currentItem.title,
     );
 
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(_isMiniMode ? 10 : 16),
-          child: _isMiniMode
-              ? _MiniPlayerBar(
-                  title: currentTitle,
-                  playerSurface: _buildPlayerSurface(),
-                  isPlaying: _isPlaying,
-                  onTogglePlayPause: _togglePlayPause,
-                  onRestore: _toggleMiniMode,
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        const Text(
-                          'ARI YouTube Player',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: WsManager.connectionNotifier,
-                          builder: (context, isConnected, child) {
-                            return Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isConnected ? Colors.green : Colors.red,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Expanded(
-                      child: Row(
+    return Column(
+      children: [
+        const AriUpdateBanner(
+          appId: 'youtube_player',
+          appName: 'ARI YouTube Player',
+        ),
+        Expanded(
+          child: Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(_isMiniMode ? 10 : 16),
+                child: _isMiniMode
+                    ? _MiniPlayerBar(
+                        title: currentTitle,
+                        playerSurface: _buildPlayerSurface(),
+                        isPlaying: _isPlaying,
+                        onTogglePlayPause: _togglePlayPause,
+                        onRestore: _toggleMiniMode,
+                      )
+                    : Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          Row(
+                            children: [
+                              const Text(
+                                'ARI YouTube Player',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              StreamBuilder<bool>(
+                                stream: AriAgent.connectionStream,
+                                initialData: AriAgent.isConnected,
+                                builder: (context, snapshot) {
+                                  final isConnected = snapshot.data ?? false;
+                                  return Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isConnected
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
                           Expanded(
-                            child: Column(
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(child: _buildPlayerSurface()),
-                                const SizedBox(height: 16),
-                                PlaybackControls(
-                                  isPlaying: _isPlaying,
-                                  onPrevious: _playPrevious,
-                                  onTogglePlayPause: _togglePlayPause,
-                                  onNext: _playNext,
-                                  onToggleMiniMode: _toggleMiniMode,
-                                  onTogglePlaylist: _togglePlaylist,
-                                  onOpenInYouTube: _openInYouTube,
-                                  isPlaylistVisible: _isPlaylistVisible,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Expanded(child: _buildPlayerSurface()),
+                                      const SizedBox(height: 16),
+                                      PlaybackControls(
+                                        isPlaying: _isPlaying,
+                                        onPrevious: _playPrevious,
+                                        onTogglePlayPause: _togglePlayPause,
+                                        onNext: _playNext,
+                                        onToggleMiniMode: _toggleMiniMode,
+                                        onTogglePlaylist: _togglePlaylist,
+                                        onOpenInYouTube: _openInYouTube,
+                                        isPlaylistVisible: _isPlaylistVisible,
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                if (_isPlaylistVisible) ...[
+                                  const SizedBox(width: 16),
+                                  const SizedBox(
+                                      width: 320, child: PlaylistPanel()),
+                                ],
                               ],
                             ),
                           ),
-                          if (_isPlaylistVisible) ...[
-                            const SizedBox(width: 16),
-                            const SizedBox(width: 320, child: PlaylistPanel()),
-                          ],
                         ],
                       ),
-                    ),
-                  ],
-                ),
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

@@ -24,8 +24,8 @@ void main(List<String> args) {
   final playlist = PlaylistProvider();
 
   if (port.isNotEmpty) {
-    WsManager.init(host: host, port: int.parse(port));
-    WsManager.connect();
+    AriAgent.init(host: host, port: int.parse(port));
+    AriAgent.connect();
 
     final handler = AppProtocolHandler(
       appId: 'youtube_player',
@@ -95,17 +95,6 @@ void main(List<String> args) {
         'isMiniMode': playlist.isMiniMode,
         'playlistCount': playlist.items.length,
       },
-      onGetCommands: () => {
-        'PLAY': '재생을 시작합니다.',
-        'PAUSE': '일시정지합니다.',
-        'NEXT': '다음 곡을 재생합니다.',
-        'PREV': '이전 곡을 재생합니다.',
-        'ADD_TO_PLAYLIST': '현재 목록에 곡을 추가합니다. {"videoIds": ["id1", ...]}',
-        'REPLACE_PLAYLIST':
-            '현재 목록을 비우고 새 목록으로 교체합니다. {"videoIds": ["id1", ...]}',
-        'REMOVE_FROM_PLAYLIST': '목록에서 특정 곡을 삭제합니다. {"videoIds": ["id1", ...]}',
-        'SET_MINI_MODE': '미니모드(바 형태)를 켜거나 끕니다. {"enabled": true/false}',
-      },
     );
     handler.start();
   }
@@ -123,14 +112,19 @@ class YouTubePlayerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ARI YouTube Player',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFd90429)),
-        scaffoldBackgroundColor: const Color(0xFF111111),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AriChatProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'ARI YouTube Player',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFd90429)),
+          scaffoldBackgroundColor: const Color(0xFF111111),
+        ),
+        home: const PlayerPage(),
       ),
-      home: const PlayerPage(),
     );
   }
 }
