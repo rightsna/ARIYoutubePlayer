@@ -8,10 +8,16 @@
 
 - **실행 프로세스**:
   1. 앱이 실행 중인지 확인하고(서버 연결 상태), 꺼져 있다면 `launch_app(appName: "youtube_player")`로 앱을 먼저 띄운다.
-  2. 재생할 비디오 목록이 확보되면 `REPLACE_PLAYLIST` 명령을 전송한다.
-     - 파라미터: `{"videoIds": ["ID1", "ID2", ...]}`
+  2. `SEARCH_PLAYLIST_CANDIDATES` 또는 `SEARCH_VIDEOS` 명령을 전송하여 재생할 비디오 목록을 확보한다.
+  3. 확보된 아이템 리스트에서 `videoId`들을 추출하여 `REPLACE_PLAYLIST` 명령을 전송하여 재생을 시작한다.
 
 - **주요 명령어 명세 (youtube_player)**:
+  - `SEARCH_VIDEOS`: YouTube에서 영상을 검색하여 결과를 반환한다. (재생 후보 선택용)
+    - Params: `{"query": "...", "limit": 5}`
+    - Returns: `{"status": "success", "items": [{"title": "...", "videoId": "...", ...}, ...]}`
+  - `SEARCH_PLAYLIST_CANDIDATES`: 분위기/장르 검색어에 적합한 플레이리스트 후보를 확장 검색하여 반환한다.
+    - Params: `{"query": "..."}`
+    - Returns: `{"status": "success", "items": [{"title": "...", "videoId": "...", ...}, ...]}`
   - `REPLACE_PLAYLIST`: 현재 목록을 싹 비우고 새 목록으로 교체한 뒤 첫 곡을 재생한다.
     - Params: `{"videoIds": ["...", ...]}`
   - `ADD_TO_PLAYLIST`: 기존 목록을 유지하며 끝에 새 비디오들을 추가한다.

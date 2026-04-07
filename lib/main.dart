@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ari_plugin/ari_plugin.dart';
 import 'player_page.dart';
 import 'playlist_provider.dart';
+import 'youtube_search_service.dart';
 
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
@@ -84,6 +85,23 @@ void main(List<String> args) {
             final bool enable = params['enabled'] ?? params['enable'] ?? true;
             playlist.setIsMiniMode(enable);
             return {'status': 'success', 'enabled': enable};
+          case 'SEARCH_VIDEOS':
+            final query = params['query'] as String? ?? '';
+            final limit = params['limit'] as int? ?? 5;
+            final searchService = YoutubeSearchService();
+            final results = await searchService.searchVideos(query, limit: limit);
+            return {
+              'status': 'success',
+              'items': results.map((e) => e.toMap()).toList()
+            };
+          case 'SEARCH_PLAYLIST_CANDIDATES':
+            final query = params['query'] as String? ?? '';
+            final searchService = YoutubeSearchService();
+            final results = await searchService.searchPlaylistCandidates(query);
+            return {
+              'status': 'success',
+              'items': results.map((e) => e.toMap()).toList()
+            };
           default:
             return {'status': 'error', 'message': 'Unknown command: $command'};
         }
