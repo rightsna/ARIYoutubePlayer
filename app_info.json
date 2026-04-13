@@ -4,7 +4,7 @@
     "description":  "유튜브 영상을 검색하고 재생 목록으로 관리할 수 있는 ARI 내장 플레이어입니다.",
     "category":  "media",
     "github_url":  "https://github.com/rightsna/ARIYoutubePlayer",
-    "version":  "0.1.22",
-    "version_code":  23,
+    "version":  "0.1.23",
+    "version_code":  24,
     "platform":  "mac"
 }
