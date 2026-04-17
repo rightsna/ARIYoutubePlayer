@@ -1,12 +1,10 @@
-# ARI Plugin Skill: ARIYoutubePlayer (Media Playback)
-
-## Overview
-`youtube_player`는 미니멀한 단일 페이지 Flutter 유튜브 플레이어로, 비디오 검색, 플레이리스트 관리 및 실시간 재생 제어를 제공합니다. 배경 음악이나 특정 영상 시청 요청을 처리할 때 사용합니다.
-
-### App ID
-`youtube_player`
-
 ---
+name: youtube-player
+description: 유튜브 영상 검색·플레이리스트 관리·재생 제어를 제공하는 미니멀 플레이어 플러그인입니다. 음악 재생, 영상 틀기, 플레이리스트 요청 시 사용.
+allowed-tools: control_app read_app_state
+---
+
+# ARIYoutubePlayer (Media Playback)
 
 ## Commands
 
