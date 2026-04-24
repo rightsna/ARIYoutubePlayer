@@ -1,5 +1,5 @@
 ---
-name: youtube-player
+name: youtube_player
 description: 유튜브 영상 검색·플레이리스트 관리·재생 제어를 제공하는 미니멀 플레이어 플러그인입니다. 음악 재생, 영상 틀기, 플레이리스트 요청 시 사용.
 allowed-tools: control_app read_app_state
 ---
