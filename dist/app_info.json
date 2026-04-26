@@ -1,12 +1,11 @@
 {
-  "app_id": "youtube_player",
-  "name": "ARI YouTube Player",
-  "description": "An ARI-integrated player for searching YouTube videos and managing them as playlists.",
-  "name_ko": "ARI 유튜브 플레이어",
-  "description_ko": "유튜브 영상을 검색하고 재생 목록으로 관리할 수 있는 ARI 내장 플레이어입니다.",
-  "category": "media",
-  "github_url": "https://github.com/rightsna/ARIYoutubePlayer",
-  "version": "0.1.26",
-  "version_code": 27,
-  "platform": "mac"
+    "app_id": "youtube_player",
+    "name": "ARI YouTube Player",
+    "description": "An ARI-integrated player for searching YouTube videos and managing them as playlists.",
+    "name_ko": "ARI 유튜브 플레이어",
+    "description_ko": "유튜브 영상을 검색하고 재생 목록으로 관리할 수 있는 ARI 내장 플레이어입니다.",
+    "category": "media",
+    "github_url": "https://github.com/rightsna/ARIYoutubePlayer",
+    "version": "0.1.26",
+    "version_code": 27
 }
